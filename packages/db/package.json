@@ -1,0 +1,22 @@
+{
+    "name": "@dktiv/db",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "author": "",
+    "type": "commonjs",
+    "main": "index.js",
+    "scripts": {
+        "prisma:generate": "prisma generate --schema=./prisma/schema.prisma",
+        "prisma:migrate": "prisma migrate dev --schema=./prisma/schema.prisma",
+        "prisma:studio": "prisma studio --schema=./prisma/schema.prisma",
+        "prisma:deploy": "prisma db push --schema=./prisma/schema.prisma",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "devDependencies": {
+        "@prisma/client": "^7.3.0"
+    },
+    "dependencies": {
+        "prisma": "^7.3.0"
+    }
+}
