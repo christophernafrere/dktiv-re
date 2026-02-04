@@ -1,7 +1,8 @@
-import Image from "next/image";
-import styles from "./page.module.css";
-import type { User } from "@dktiv/db";
-
 export default function Home() {
-    return <></>;
+    return (
+        <>
+            <h1>Hello World</h1>
+            <p className="medium-20">This is the home page.</p>
+        </>
+    );
 }
