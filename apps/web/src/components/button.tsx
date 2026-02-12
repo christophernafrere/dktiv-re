@@ -24,6 +24,7 @@ export const Button = styled.button<{ $cta?: boolean }>`
 `;
 
 export const TransparentButton = styled.button`
+    align-self: flex-start;
     background-color: transparent;
     border: none;
     font-size: 14px;
@@ -35,4 +36,20 @@ export const TransparentButton = styled.button`
     &:hover {
         background-color: ${colors.opacity.blue25};
     }
+`;
+
+export const SocialButton = styled.button`
+    width: 100%;
+    border: 1px solid ${colors.tertiary.grey300};
+    flex: 3;
+    font-weight: 400;
+    font-size: 16px;
+    background-color: transparent;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 8px;
+    margin: 6px 0;
 `;
