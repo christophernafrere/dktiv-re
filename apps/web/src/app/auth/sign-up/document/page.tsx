@@ -1,12 +1,12 @@
 "use client";
 import { Button, TransparentButton } from "@/components/button";
 import colors from "@/lib/color";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export default function DocumentPage() {
     const router = useRouter();
@@ -14,12 +14,14 @@ export default function DocumentPage() {
         "selection" | "passport" | "identity-card"
     >("selection");
 
+    const [selectedPreview, setSelectedPreview] = useState<number>(0);
+
     const [photos, setPhotos] = useState<string[]>([]);
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
-    const [rectoVerso, setRectoVerso] = useState<"recto" | "verso" | "end">(
-        "recto",
-    );
+    const [rectoVerso, setRectoVerso] = useState<
+        "recto" | "verso" | "end" | "post-check"
+    >("recto");
     const streamRef = useRef<MediaStream | null>(null);
     useEffect(() => {
         if (documentScanStep === "selection") return;
@@ -128,18 +130,58 @@ export default function DocumentPage() {
                 </>
             ) : (
                 <CameraStep>
+                    <h2>Vérifie ton identité</h2>
                     <CamArea>
-                        <CameraResult ref={videoRef} autoPlay playsInline />
+                        {rectoVerso == "recto" || rectoVerso == "verso" ? (
+                            <CameraResult ref={videoRef} autoPlay playsInline />
+                        ) : (
+                            <FinalPreviewWrapper>
+                                <PreviewWrapper
+                                    $selectedImage={selectedPreview}>
+                                    {photos.map((photo, id) => (
+                                        <FinalPreviewImage
+                                            $checked={
+                                                rectoVerso === "post-check"
+                                            }
+                                            src={photo}
+                                            alt="preview"
+                                            key={id}
+                                        />
+                                    ))}
+
+                                    {rectoVerso == "post-check" && (
+                                        <CheckIndicator>
+                                            <CheckIcon color="#fff" />
+                                        </CheckIndicator>
+                                    )}
+                                </PreviewWrapper>
+                                {rectoVerso == "end" && (
+                                    <PreviewThumbnailContainer>
+                                        {photos.map((photo, id) => (
+                                            <img
+                                                src={photo}
+                                                onClick={() =>
+                                                    setSelectedPreview(id)
+                                                }
+                                                alt="preview"
+                                                key={id}
+                                            />
+                                        ))}
+                                    </PreviewThumbnailContainer>
+                                )}
+                            </FinalPreviewWrapper>
+                        )}
                         <Instruction className="medium-20">
                             {
                                 {
                                     recto: "Placez le devant de votre document dans le cadre",
                                     verso: "Placez l'arrière de votre document dans le cadre",
                                     end: "Assurez-vous que vos informations sont claires et visibles",
+                                    "post-check": "Enregistrement terminé",
                                 }[rectoVerso]
                             }
                         </Instruction>
-                        {rectoVerso != "end" && (
+                        {(rectoVerso == "recto" || rectoVerso == "verso") && (
                             <>
                                 <PreviewList>
                                     {photos.map((photo, id) => (
@@ -154,15 +196,45 @@ export default function DocumentPage() {
                         )}
                     </CamArea>
                     {rectoVerso != "end" ? (
-                        <BottomArea>
-                            <PhotoButton onClick={takePhoto}>
-                                <div />
-                            </PhotoButton>
-                        </BottomArea>
+                        rectoVerso != "post-check" && (
+                            <BottomArea>
+                                <PhotoButton onClick={takePhoto}>
+                                    <div />
+                                </PhotoButton>
+                            </BottomArea>
+                        )
                     ) : (
                         <>
-                            <Button>Soumettre les photos</Button>
-                            <Button>Repprendre les photos</Button>
+                            <Button
+                                $cta
+                                style={{
+                                    width: "100%",
+                                    margin: "64px 0 8px 0",
+                                    fontSize: "16px",
+                                }}
+                                onClick={() => {
+                                    setRectoVerso("post-check");
+                                    setTimeout(() => {
+                                        router.push("/sign-up/question");
+                                    }, 5000);
+                                }}>
+                                Soumettre les photos
+                            </Button>
+                            <Button
+                                style={{
+                                    width: "100%",
+                                    margin: " 8px 0",
+                                    color: colors.primary.blue,
+                                    borderColor: colors.primary.blue,
+                                    fontSize: "16px",
+                                }}
+                                onClick={() => {
+                                    setRectoVerso("recto");
+                                    setDocumentScanStep("selection");
+                                    setPhotos([]);
+                                }}>
+                                Repprendre les photos
+                            </Button>
                         </>
                     )}
                 </CameraStep>
@@ -247,6 +319,81 @@ const PreviewList = styled.ul`
         width: 40%;
         aspect-ratio: 1.586;
         object-fit: cover;
-        border-radius: 8px;
+        overflow: hidden;
     }
+`;
+
+const FinalPreviewWrapper = styled.article`
+    width: 100%;
+    height: max-content;
+    overflow: hidden;
+    position: relative;
+`;
+
+const PreviewThumbnailContainer = styled.div`
+    position: absolute;
+    bottom: 0;
+    z-index: 10;
+    width: 100%;
+    height: 60px;
+    background-color: #0000009d;
+    display: flex;
+    padding: 4px;
+    gap: 8px;
+    img {
+        width: 25%;
+        aspect-ratio: 1.586;
+        border-radius: 4%;
+        box-shadow: 0 1px 3px white;
+    }
+`;
+
+const BoundAndApear = keyframes`
+
+
+    from {
+        transform: translate(-50%, -50%) rotateX(0deg)
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotateZ(360deg)
+
+    }
+`;
+
+const CheckIndicator = styled.div`
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    border-radius: 50%;
+
+    width: 48px;
+    height: 48px;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #10b981;
+    animation: ${BoundAndApear} 2s infinite;
+    transform-origin: center center;
+`;
+
+const PreviewWrapper = styled.div<{
+    $selectedImage: number;
+}>`
+    width: 100%;
+    display: flex;
+    transform: translateX(-${({ $selectedImage }) => $selectedImage * 100}%);
+
+    transition: 500ms;
+`;
+
+const FinalPreviewImage = styled.img<{ $checked?: boolean }>`
+    width: 100%;
+    ${({ $checked }) => $checked && "border: 3px solid #10b981;"}
+    box-sizing: border-box;
+    aspect-ratio: 1.586;
+    object-fit: cover;
+    border-radius: 8px;
+    float: right;
 `;
