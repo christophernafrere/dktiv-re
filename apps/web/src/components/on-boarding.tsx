@@ -42,7 +42,7 @@ export default function OnBoardingPage() {
         if (diff > threshold) {
             // swipe left
             setOnBoardingStep(
-                (prev) => ({ 0: 0, 1: 2, 2: 3, 3: 4 })[prev] as 0 | 1 | 2 | 3,
+                (prev) => ({ 0: 0, 1: 2, 2: 3, 3: 3 })[prev] as 0 | 1 | 2 | 3,
             );
         }
 
@@ -123,7 +123,9 @@ export default function OnBoardingPage() {
                         ) : (
                             <>
                                 <SuitButton
-                                    onClick={() => router.push("/auth/signup")}>
+                                    onClick={() =>
+                                        router.push("/auth/sign-up")
+                                    }>
                                     C'est parti
                                 </SuitButton>
                             </>
