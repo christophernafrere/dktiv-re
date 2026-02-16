@@ -45,7 +45,7 @@ export const SocialButton = styled.button`
     font-weight: 400;
     font-size: 16px;
     background-color: transparent;
-    padding: 12px;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
