@@ -82,24 +82,26 @@ export default function SignupPage() {
                 <Line />
             </OrSeparator>
 
-            <SocialButton>
-                <Image
-                    src="/images/icon/apple.png"
-                    alt="Apple"
-                    width={19.45}
-                    height={24}
-                />
-                Continuer avec Apple
-            </SocialButton>
-            <SocialButton>
-                <Image
-                    src="/images/icon/google.png"
-                    alt="Google"
-                    width={24}
-                    height={24}
-                />
-                Continuer avec Google
-            </SocialButton>
+            <div>
+                <SocialButton>
+                    <Image
+                        src="/images/icon/apple.png"
+                        alt="Apple"
+                        width={19.45}
+                        height={24}
+                    />
+                    Continuer avec Apple
+                </SocialButton>
+                <SocialButton>
+                    <Image
+                        src="/images/icon/google.png"
+                        alt="Google"
+                        width={24}
+                        height={24}
+                    />
+                    Continuer avec Google
+                </SocialButton>
+            </div>
 
             <ConnectLink className="regular-16">
                 Déjà un compte ? <Link href="/auth/signup">Me connecter</Link>
