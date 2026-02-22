@@ -2,11 +2,18 @@
     "name": "@dktiv/db",
     "version": "1.0.0",
     "description": "",
-    "types": "index.d.ts",
+    "types": "./dist/src/index.d.ts",
     "license": "ISC",
     "author": "",
     "type": "module",
-    "main": "./dist/index.js",
+    "main": "./dist/src/index.js",
+    "exports": {
+        ".": {
+            "types": "./dist/src/index.d.ts",
+            "import": "./dist/src/index.js",
+            "default": "./dist/src/index.js"
+        }
+    },
     "scripts": {
         "build": "tsc -p tsconfig.json",
         "prisma:generate": "prisma generate --schema=./prisma/schema.prisma",
