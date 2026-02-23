@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { prisma } from '@dktiv/db';
 
 @Injectable()
 export class UserService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor() {}
 
     async createUser(
         lastName: string,
@@ -13,7 +13,7 @@ export class UserService {
         password: string,
     ) {
         try {
-            const newUser = await this.prisma.user.create({
+            const newUser = await prisma.user.create({
                 data: {
                     lastName,
                     firstName,
@@ -31,59 +31,61 @@ export class UserService {
 
             return newUser;
         } catch (error) {
-            throw new Error('Internal Server Error');
+            throw new HttpException(
+                'Internal Server Error',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
     async getUsers() {
         try {
-            const users = await this.prisma.user.findMany();
-
-            return users;
+            return await prisma.user.findMany();
         } catch (error) {
-            throw new Error('Internal Server Error');
+            throw new HttpException(
+                'Internal Server Error',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
     async getUserById(id: string) {
         try {
-            const user = await this.prisma.user.findUnique({
+            const user = await prisma.user.findUnique({
                 where: {
                     id,
                 },
             });
 
-            if (!user) {
-                throw new Error('No user founded');
-            } else {
-                return user;
-            }
+            return user;
         } catch (error) {
-            throw new Error('Internal Server Error');
+            throw new HttpException(
+                'Internal Server Error',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
     async getUserByEmail(email: string) {
         try {
-            const user = await this.prisma.user.findUnique({
+            const user = await prisma.user.findUnique({
                 where: {
                     email,
                 },
             });
 
-            if (!user) {
-                throw new Error('No user founded');
-            } else {
-                return user;
-            }
+            return user;
         } catch (error) {
-            throw new Error('Internal Server Error');
+            throw new HttpException(
+                'Internal Server Error',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 
     async userCheck(email: string) {
         try {
-            const user = await this.prisma.user.findUnique({
+            return await prisma.user.findUnique({
                 where: {
                     email,
                 },
@@ -92,10 +94,11 @@ export class UserService {
                     password: true,
                 },
             });
-
-            return user;
         } catch (error) {
-            throw new Error('Internal Server Error');
+            throw new HttpException(
+                'Internal Server Error',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 }
