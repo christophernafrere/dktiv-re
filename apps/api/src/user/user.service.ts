@@ -55,6 +55,13 @@ export class UserService {
                 where: {
                     id,
                 },
+                select: {
+                    lastName: true,
+                    firstName: true,
+                    pseudo: true,
+                    email: true,
+                    createdAt: true,
+                },
             });
 
             return user;
