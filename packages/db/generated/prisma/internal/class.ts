@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.3.0",
   "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  firstName String\n  lastName  String\n  pseudo    String\n  email     String   @unique\n  password  String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id             String         @id @default(uuid())\n  firstName      String\n  lastName       String\n  pseudo         String\n  email          String         @unique\n  password       String\n  createdAt      DateTime       @default(now())\n  updatedAt      DateTime       @updatedAt\n  managedCompany Company[]\n  missions       Mission[]\n  feedback       UserFeedback[]\n}\n\nmodel Mission {\n  id        String         @id @default(uuid())\n  name      String\n  maxUser   Int\n  category  String\n  companyId String\n  company   Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)\n  users     User[]\n  date      DateTime\n  feedback  UserFeedback[]\n  createdAt DateTime       @default(now())\n}\n\nmodel UserFeedback {\n  id        String  @id @default(uuid())\n  user      User    @relation(fields: [userId], references: [id])\n  userId    String\n  mission   Mission @relation(fields: [missionId], references: [id])\n  missionId String\n  company   String?\n  coverUrl  String\n  Rate      Int\n}\n\nmodel Company {\n  id          String    @id @default(uuid())\n  name        String\n  logoUrl     String\n  description String\n  manager     User      @relation(fields: [managerId], references: [id], onDelete: Cascade)\n  managerId   String\n  missions    Mission[]\n  createdAt   DateTime  @default(now())\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -28,7 +28,7 @@ const config: runtime.GetPrismaClientConfig = {
   }
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"pseudo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"firstName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"lastName\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"pseudo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"managedCompany\",\"kind\":\"object\",\"type\":\"Company\",\"relationName\":\"CompanyToUser\"},{\"name\":\"missions\",\"kind\":\"object\",\"type\":\"Mission\",\"relationName\":\"MissionToUser\"},{\"name\":\"feedback\",\"kind\":\"object\",\"type\":\"UserFeedback\",\"relationName\":\"UserToUserFeedback\"}],\"dbName\":null},\"Mission\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"maxUser\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"category\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"companyId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"company\",\"kind\":\"object\",\"type\":\"Company\",\"relationName\":\"CompanyToMission\"},{\"name\":\"users\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"MissionToUser\"},{\"name\":\"date\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"feedback\",\"kind\":\"object\",\"type\":\"UserFeedback\",\"relationName\":\"MissionToUserFeedback\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"UserFeedback\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"user\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"UserToUserFeedback\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"mission\",\"kind\":\"object\",\"type\":\"Mission\",\"relationName\":\"MissionToUserFeedback\"},{\"name\":\"missionId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"company\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"coverUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"Rate\",\"kind\":\"scalar\",\"type\":\"Int\"}],\"dbName\":null},\"Company\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"logoUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"description\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"manager\",\"kind\":\"object\",\"type\":\"User\",\"relationName\":\"CompanyToUser\"},{\"name\":\"managerId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"missions\",\"kind\":\"object\",\"type\":\"Mission\",\"relationName\":\"CompanyToMission\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 
 async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Module> {
   const { Buffer } = await import('node:buffer')
@@ -185,6 +185,36 @@ export interface PrismaClient<
     * ```
     */
   get user(): Prisma.UserDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.mission`: Exposes CRUD operations for the **Mission** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Missions
+    * const missions = await prisma.mission.findMany()
+    * ```
+    */
+  get mission(): Prisma.MissionDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.userFeedback`: Exposes CRUD operations for the **UserFeedback** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more UserFeedbacks
+    * const userFeedbacks = await prisma.userFeedback.findMany()
+    * ```
+    */
+  get userFeedback(): Prisma.UserFeedbackDelegate<ExtArgs, { omit: OmitOpts }>;
+
+  /**
+   * `prisma.company`: Exposes CRUD operations for the **Company** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Companies
+    * const companies = await prisma.company.findMany()
+    * ```
+    */
+  get company(): Prisma.CompanyDelegate<ExtArgs, { omit: OmitOpts }>;
 }
 
 export function getPrismaClientClass(): PrismaClientConstructor {
