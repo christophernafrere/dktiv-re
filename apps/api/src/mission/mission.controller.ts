@@ -62,7 +62,7 @@ export class MissionController {
     @Put(':id/subscribe')
     async subscribeToMission(@Req() req, @Param('id') id: string) {
         const mission = await this.missionService.addUserToMission(
-            regitgit q.user.id,
+            req.user.id,
             id,
         );
 
