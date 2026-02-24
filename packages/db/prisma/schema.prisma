@@ -8,51 +8,51 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  firstName String
-  lastName  String
-  pseudo    String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  managedCompany  Company[]
-  missions  Mission[]
-  feedback  UserFeedback[]
+  id             String         @id @default(uuid())
+  firstName      String
+  lastName       String
+  pseudo         String
+  email          String         @unique
+  password       String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  managedCompany Company[]
+  missions       Mission[]
+  feedback       UserFeedback[]
 }
 
 model Mission {
-  id String @id @default(uuid())
-  name  String
-  maxUser Int
+  id        String         @id @default(uuid())
+  name      String
+  maxUser   Int
   category  String
   companyId String
-  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  users User[]
-  date  DateTime
+  company   Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  users     User[]
+  date      DateTime
+  location  String
   feedback  UserFeedback[]
-  createdAt DateTime @default(now())
+  imageUrl  String
+  createdAt DateTime       @default(now())
 }
 
-
 model UserFeedback {
-  id  String  @id   @default(uuid())
-  user  User  @relation(fields: [userId], references: [id])
-  userId  String
-  mission  Mission  @relation(fields: [missionId], references: [id])
+  id        String  @id @default(uuid())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  mission   Mission @relation(fields: [missionId], references: [id])
   missionId String
-  company String?
-  coverUrl  String
-  Rate  Int
+  company   String?
+  rate      Int
 }
 
 model Company {
-  id  String  @id @default(uuid())
-  name  String
-  logoUrl String
+  id          String    @id @default(uuid())
+  name        String
+  logoUrl     String
   description String
-  manager User  @relation(fields: [managerId], references: [id], onDelete: Cascade)
-  managerId String
-  missions  Mission[]
-  createdAt DateTime  @default(now())
+  manager     User      @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  managerId   String
+  missions    Mission[]
+  createdAt   DateTime  @default(now())
 }

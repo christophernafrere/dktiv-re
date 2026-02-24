@@ -94,6 +94,8 @@ export const MissionScalarFieldEnum = {
   category: 'category',
   companyId: 'companyId',
   date: 'date',
+  location: 'location',
+  imageUrl: 'imageUrl',
   createdAt: 'createdAt'
 } as const
 
@@ -105,8 +107,7 @@ export const UserFeedbackScalarFieldEnum = {
   userId: 'userId',
   missionId: 'missionId',
   company: 'company',
-  coverUrl: 'coverUrl',
-  Rate: 'Rate'
+  rate: 'rate'
 } as const
 
 export type UserFeedbackScalarFieldEnum = (typeof UserFeedbackScalarFieldEnum)[keyof typeof UserFeedbackScalarFieldEnum]
