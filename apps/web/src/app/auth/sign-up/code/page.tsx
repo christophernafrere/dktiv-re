@@ -1,14 +1,11 @@
 "use client";
-import { Button, SocialButton, TransparentButton } from "@/components/button";
-import { Form, Label } from "@/components/form";
+import { Button, TransparentButton } from "@/components/button";
+import { Form } from "@/components/form";
 import colors from "@/lib/color";
 import { ArrowLeft } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
-import validator from "validator";
 
 export default function SignupPage() {
     const router = useRouter();
@@ -17,6 +14,9 @@ export default function SignupPage() {
     const [code3, setCode3] = useState<number>();
     const [code4, setCode4] = useState<number>();
     const [code5, setCode5] = useState<number>();
+
+    const searchParams = useSearchParams();
+    const email = searchParams.get("email");
 
     const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
@@ -46,8 +46,8 @@ export default function SignupPage() {
                 <p
                     className="regular-16"
                     style={{ color: colors.tertiary.grey500 }}>
-                    Tu as reçu un code de vérification sur ton adresse mail
-                    sophiedubois@gmail.com
+                    Tu as reçu un code de vérification sur ton adresse mail{" "}
+                    {email}
                 </p>
 
                 <InputContainer>
