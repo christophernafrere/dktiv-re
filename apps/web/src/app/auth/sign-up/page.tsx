@@ -1,6 +1,7 @@
 "use client";
 import { Button, SocialButton, TransparentButton } from "@/components/button";
 import { Form, Label } from "@/components/form";
+import { apiUrl } from "@/lib/api";
 import colors from "@/lib/color";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
@@ -12,6 +13,9 @@ import validator from "validator";
 
 export default function SignupPage() {
     const router = useRouter();
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [pseudo, setPseudo] = useState<string>("");
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [canSubmit, setCanSubmit] = useState<boolean>(false);
@@ -28,18 +32,35 @@ export default function SignupPage() {
             validator.isEmail(email) && validator.isLength(password, 10),
         );
     };
-    const handleSubmit = (
+    const handleSubmit = async (
         e: import("react").FormEvent<HTMLFormElement>,
-    ): void => {
+    ) => {
         e.preventDefault();
 
         const payload = {
+            firstName,
+            lastName,
+            pseudo,
             email,
             password,
         };
 
-        router.push("/auth/sign-up/code");
+        const response = await fetch(apiUrl("/auth/sign-up"), {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+        });
+
+        router.push(`/auth/sign-up/code?email=${encodeURIComponent(email)}`);
     };
+    const handleChangeFirstname = (e: ChangeEvent<HTMLInputElement>): void =>
+        setFirstName(e.target.value);
+    const handleChangeLastname = (e: ChangeEvent<HTMLInputElement>): void =>
+        setLastName(e.target.value);
+    const handleChangePseudo = (e: ChangeEvent<HTMLInputElement>): void =>
+        setPseudo(e.target.value);
     return (
         <Main>
             <TransparentButton onClick={() => router.push("/")}>
@@ -47,11 +68,45 @@ export default function SignupPage() {
             </TransparentButton>
             <Form onSubmit={handleSubmit}>
                 <h2>Créer ton compte</h2>
+
+                <Label className="regular-16">
+                    Prénom
+                    <input
+                        type="text"
+                        placeholder="John"
+                        onChange={handleChangeFirstname}
+                        className="regular-16"
+                        required
+                    />
+                </Label>
+
+                <Label className="regular-16">
+                    Nom
+                    <input
+                        type="text"
+                        placeholder="Doe"
+                        onChange={handleChangeLastname}
+                        className="regular-16"
+                        required
+                    />
+                </Label>
+
+                <Label className="regular-16">
+                    Pseudo
+                    <input
+                        type="pseudo"
+                        placeholder="JohnD"
+                        onChange={handleChangePseudo}
+                        className="regular-16"
+                        required
+                    />
+                </Label>
+
                 <Label className="regular-16">
                     E-mail
                     <input
                         type="email"
-                        placeholder="john@gmail.com"
+                        placeholder="john.doe@gmail.com"
                         onChange={handleChangeEmail}
                         className="regular-16"
                         required
@@ -104,7 +159,7 @@ export default function SignupPage() {
             </div>
 
             <ConnectLink className="regular-16">
-                Déjà un compte ? <Link href="/auth/signup">Me connecter</Link>
+                Déjà un compte ? <Link href="/auth/sign-in">Me connecter</Link>
             </ConnectLink>
         </Main>
     );
