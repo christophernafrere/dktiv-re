@@ -1,6 +1,7 @@
 "use client";
 import { Button, SocialButton, TransparentButton } from "@/components/button";
 import { Form, Label } from "@/components/form";
+import { apiUrl } from "@/lib/api";
 import colors from "@/lib/color";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
@@ -44,16 +45,13 @@ export default function SignupPage() {
             password,
         };
 
-        const response = await fetch(
-            "https://api.dktiv.christopher-nafrere.fr/auth/sign-up",
-            {
-                method: "post",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
+        const response = await fetch(apiUrl("/auth/sign-up"), {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
             },
-        );
+            body: JSON.stringify(payload),
+        });
 
         router.push(`/auth/sign-up/code?email=${encodeURIComponent(email)}`);
     };

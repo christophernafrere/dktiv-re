@@ -2,6 +2,7 @@
 import { Button, SocialButton, TransparentButton } from "@/components/button";
 import { Form, Label } from "@/components/form";
 import colors from "@/lib/color";
+import { apiUrl } from "@/lib/api";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -38,17 +39,14 @@ export default function SignupPage() {
             password,
         };
 
-        const response = await fetch(
-            "https://api.dktiv.christopher-nafrere.fr/auth/login",
-            {
-                method: "post",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-                body: JSON.stringify(payload),
+        const response = await fetch(apiUrl("/auth/login"), {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json",
             },
-        );
+            credentials: "include",
+            body: JSON.stringify(payload),
+        });
 
         const data = await response.json();
 
