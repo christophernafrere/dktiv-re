@@ -1,6 +1,5 @@
 const baseApiUrl = (
-    process.env.NEXT_PUBLIC_API_URL ??
-    "https://api.dktiv.christopher-nafrere.fr"
+    process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
 ).replace(/\/+$/, "");
 
 export function apiUrl(path: string): string {

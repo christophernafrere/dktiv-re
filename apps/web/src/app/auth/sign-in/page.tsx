@@ -7,31 +7,22 @@ import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import styled from "styled-components";
-import validator from "validator";
+import { toast } from "react-toastify";
 
 export default function SignupPage() {
     const router = useRouter();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-    const [canSubmit, setCanSubmit] = useState<boolean>(false);
 
     const handleChangeEmail = (e: ChangeEvent<HTMLInputElement>): void => {
         setEmail(e.target.value);
-        setCanSubmit(
-            validator.isEmail(email) && validator.isLength(password, 10),
-        );
     };
     const handleChangePassword = (e: ChangeEvent<HTMLInputElement>): void => {
         setPassword(e.target.value);
-        setCanSubmit(
-            validator.isEmail(email) && validator.isLength(password, 10),
-        );
     };
-    const handleSubmit = async (
-        e: import("react").FormEvent<HTMLFormElement>,
-    ) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const payload = {
@@ -39,18 +30,30 @@ export default function SignupPage() {
             password,
         };
 
-        const response = await fetch(apiUrl("/auth/login"), {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            credentials: "include",
-            body: JSON.stringify(payload),
-        });
+        try {
+            const response = await fetch(apiUrl("/auth/login"), {
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify(payload),
+            });
 
-        const data = await response.json();
+            if (response.ok) {
+                const data = await response.json();
 
-        router.push(`/`);
+                toast.success("Connexion reussie");
+
+                return router.push(`/`);
+            }
+
+            toast.error("L'email ou le mot de passe est invalide");
+        } catch (error) {
+            toast.error(
+                "Une erreur est survenue, veuiller réessayer plus tard",
+            );
+        }
     };
 
     return (
@@ -80,14 +83,9 @@ export default function SignupPage() {
                         className="regular-16"
                         required
                     />
-                    <p className="caption-regular">
-                        Utilise au moins 10 charactères
-                    </p>
                 </Label>
 
-                <Button $cta disabled={!canSubmit}>
-                    Inscription
-                </Button>
+                <Button $cta>Connexion</Button>
             </Form>
 
             <OrSeparator>
